@@ -1,0 +1,9 @@
+{
+  "account": "",
+  "ckbUrl": "https://testnet.ckb.dev",
+  "cellCount": 250,
+  "sendCount": 10000,
+  "txCountRange": [1, 10],
+  "fee": 1000,
+  "intervalTime": 0
+}

@@ -1,0 +1,33 @@
+{
+  "name": "ckb-linked-tx-test",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "demo": "ts-node scripts/demo.ts",
+    "split": "ts-node scripts/split.ts"
+  },
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "@ckb-lumos/base": "^0.21.0-next.0",
+    "@ckb-lumos/bi": "^0.21.0-next.0",
+    "@ckb-lumos/ckb-indexer": "^0.21.0-next.0",
+    "@ckb-lumos/common-scripts": "^0.21.0-next.0",
+    "@ckb-lumos/config-manager": "^0.21.0-next.0",
+    "@ckb-lumos/experiment-tx-assembler": "^0.21.0-next.0",
+    "@ckb-lumos/hd": "^0.21.0-next.0",
+    "@ckb-lumos/hd-cache": "^0.21.0-next.0",
+    "@ckb-lumos/helpers": "^0.21.0-next.0",
+    "@ckb-lumos/lumos": "^0.21.0-next.0",
+    "@ckb-lumos/rpc": "^0.21.0-next.0",
+    "@typescript-eslint/eslint-plugin": "5.62.0",
+    "@typescript-eslint/parser": "5.62.0",
+    "eslint-config-prettier": "8.10.0",
+    "eslint-plugin-prettier": "4.2.1",
+    "eslint": "8.56.0",
+    "prettier": "2.8.8",
+    "ts-node": "^10.9.1"
+  }
+
+}
