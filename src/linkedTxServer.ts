@@ -8,6 +8,8 @@ import {CKBIndexerClient, RPCClient} from "./config";
 import {asyncSleep, getSecp256k1Account} from "./util";
 import {CKBIndexerQueryOptions, OtherQueryOptions} from "@ckb-lumos/ckb-indexer/lib/type";
 import {bytes} from "@ckb-lumos/codec";
+import {formatter as paramsFmts} from "@ckb-lumos/rpc/lib/paramsFormatter";
+import {CKBComponents} from "@ckb-lumos/rpc/lib/types/api";
 
 
 export async function getCells(accountPrivate: string, count: number, minCapacity: number = 71): Promise<Cell[]> {
@@ -72,7 +74,22 @@ export async function buildAndSendTransactionWithCells(cells: Cell[], select_lis
     let rawTx = signTransactionWithPrivate(tx, account_private)
     // send cells
     let timestamp = Date.now();
-    let txHash = await RPCClient.sendTransaction(rawTx)
+    //todo 如果报错了, 直接移除 相关cell
+    // let txHash = await RPCClient.sendTransaction(rawTx)
+    // let txHash = await send_test_transaction(CKB_RPC_URL,rawTx)
+    let txHash = "";
+    for (let i = 0; i < 10; i++) {
+        try {
+            txHash = await RPCClient.sendTransaction(rawTx)
+            break
+        } catch (e) {
+            await asyncSleep(1000)
+            console.log(`try again ${i}:${e}`)
+            if (i == 9) {
+                throw e
+            }
+        }
+    }
     // console.log("send tx:", txHash)
     // update cells
     select_list.forEach((select, index) => {
@@ -190,3 +207,60 @@ export async function waitTransactionCommitted(
     return tx;
 }
 
+export async function send_test_transaction(CKB_RPC_URL: string, tx: CKBComponents.RawTransaction): Promise<string> {
+    const res = await request(1, CKB_RPC_URL, "send_test_transaction", [
+        paramsFmts.toRawTransaction(tx), "passthrough"
+    ]);
+    return res;
+}
+
+const RPC_DEBUG_SERVICE = true
+
+export const request = async (
+    id: number,
+    ckbIndexerUrl: string,
+    method: string,
+    params?: any
+): Promise<any> => {
+    if (RPC_DEBUG_SERVICE) {
+        console.log("curl --location --request POST '" + ckbIndexerUrl + "' \\\n" +
+            "--header 'Content-Type: application/json' \\\n" +
+            "--data-raw '{\n" +
+            "\t\"jsonrpc\":\"2.0\",\n" +
+            "\t\"method\":\"" + method + "\",\n" +
+            "\t\"params\":" + JSON.stringify(params) + ",\n" +
+            "\t\"id\":64\n" +
+            "}'")
+    }
+    const res = await fetch(ckbIndexerUrl, {
+        method: "POST",
+        body: JSON.stringify({
+            id,
+            jsonrpc: "2.0",
+            method,
+            params
+        }),
+        headers: {
+            "Content-Type": "application/json"
+        }
+    });
+    if (res.status !== 200) {
+        throw new Error(`light client request failed with HTTP code ${res.status}`);
+    }
+    const data = await res.json();
+
+    if (data.error !== undefined) {
+        if (RPC_DEBUG_SERVICE) {
+            console.log(JSON.stringify(data.error))
+        }
+        throw new Error(
+            `light client request rpc failed with error: ${JSON.stringify(
+                data.error
+            )}`
+        );
+    }
+    if (RPC_DEBUG_SERVICE) {
+        console.log(JSON.stringify(data.result))
+    }
+    return data.result;
+};

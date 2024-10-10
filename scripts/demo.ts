@@ -99,6 +99,7 @@ async function main() {
         }
 
         RPCClient.getRawTxPool(true).then(toRawTxPool => {
+            console.log("")
             console.log("final txHash ancestorsSize:", BI.from(toRawTxPool.pending[ret.txHash].ancestorsCount).toNumber())
         })
         await waitTransactionCommitted(ret.txHash);

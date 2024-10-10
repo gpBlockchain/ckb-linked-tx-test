@@ -4,6 +4,7 @@ import {init, RPCClient} from "../src/config";
 import {asyncSleep} from "../src/util";
 
 const BATCH_SIZE = 100;
+const RESEND_INTERVAL = 250;
 
 async function main() {
     const configFile: string = fs.readFileSync('./config.json').toString();
@@ -68,7 +69,7 @@ async function main() {
                     removeIdx.push(i);
                 }
             }
-            await asyncSleep(250);
+            await asyncSleep(RESEND_INTERVAL);
         }
         // update ancestorsCount and time
         let tx_pool = await RPCClient.getRawTxPool(true);
