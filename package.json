@@ -4,7 +4,8 @@
   "main": "index.js",
   "scripts": {
     "demo": "ts-node scripts/demo.ts",
-    "split": "ts-node scripts/split.ts"
+    "split": "ts-node scripts/split.ts",
+    "resend": "ts-node scripts/resend.ts"
   },
   "author": "",
   "license": "ISC",
