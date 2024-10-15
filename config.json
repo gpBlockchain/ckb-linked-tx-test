@@ -1,9 +1,9 @@
 {
-  "account": "",
-  "ckbUrl": "https://testnet.ckb.dev",
-  "cellCount": 250,
-  "sendCount": 10000,
-  "txCountRange": [1, 10],
+  "account": "0x98400f6a67af07025f5959af35ed653d649f745b8f54bf3f07bef9bd605ee946",
+  "ckbUrl": "http://18.167.71.41:8020",
+  "cellCount": 10,
+  "sendCount": 300,
+  "txCountRange": [1, 3],
   "fee": 1000,
   "intervalTime": 0
 }

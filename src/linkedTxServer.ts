@@ -4,7 +4,7 @@ import {blockchain} from "@ckb-lumos/base";
 import {encodeToAddress, sealTransaction, TransactionSkeletonType} from "@ckb-lumos/helpers";
 import {common} from "@ckb-lumos/common-scripts";
 import {key} from "@ckb-lumos/hd";
-import {CKBIndexerClient, RPCClient} from "./config";
+import {CKB_RPC_URL, CKBIndexerClient, RPCClient} from "./config";
 import {asyncSleep, getSecp256k1Account} from "./util";
 import {CKBIndexerQueryOptions, OtherQueryOptions} from "@ckb-lumos/ckb-indexer/lib/type";
 import {bytes} from "@ckb-lumos/codec";
@@ -80,7 +80,7 @@ export async function buildAndSendTransactionWithCells(cells: Cell[], select_lis
     let txHash = "";
     for (let i = 0; i < 10; i++) {
         try {
-            txHash = await RPCClient.sendTransaction(rawTx)
+            txHash = await send_test_transaction(CKB_RPC_URL, rawTx)
             break
         } catch (e) {
             await asyncSleep(1000)
@@ -207,6 +207,19 @@ export async function waitTransactionCommitted(
     return tx;
 }
 
+
+export async function remove_transaction(CKB_RPC_URL: string, txHash: String): Promise<void> {
+    await request(1, CKB_RPC_URL, "remove_transaction", [
+        txHash
+    ]);
+}
+
+export async function clear_tx_pool(CKB_RPC_URL: string): Promise<void> {
+    await request(1, CKB_RPC_URL, "clear_tx_pool", [
+    ]);
+}
+
+
 export async function send_test_transaction(CKB_RPC_URL: string, tx: CKBComponents.RawTransaction): Promise<string> {
     const res = await request(1, CKB_RPC_URL, "send_test_transaction", [
         paramsFmts.toRawTransaction(tx), "passthrough"
@@ -214,7 +227,7 @@ export async function send_test_transaction(CKB_RPC_URL: string, tx: CKBComponen
     return res;
 }
 
-const RPC_DEBUG_SERVICE = true
+const RPC_DEBUG_SERVICE = false
 
 export const request = async (
     id: number,

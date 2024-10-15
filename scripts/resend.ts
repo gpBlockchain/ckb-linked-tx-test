@@ -4,7 +4,7 @@ import {init, RPCClient} from "../src/config";
 import {asyncSleep} from "../src/util";
 
 const BATCH_SIZE = 100;
-const RESEND_INTERVAL = 250;
+const RESEND_INTERVAL = 50;
 
 async function main() {
     const configFile: string = fs.readFileSync('./config.json').toString();
@@ -52,7 +52,7 @@ async function main() {
         console.log("sendTxs size:", sendTxs.length);
         const removeIdx: number[] = [];
 
-        for (let i = 0; i < sendTxs.length && i < 20; i++) {
+        for (let i = 0; i < sendTxs.length && i < BATCH_SIZE; i++) {
             const txHash = sendTxs[i];
             const tx = txInfoMap.get(txHash);
             console.log(`send txHash:${txHash},waitTime:${tx.waitTime},ancestorsCount:${tx.ancestorsCount}`);
