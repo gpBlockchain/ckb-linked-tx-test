@@ -1,5 +1,3 @@
-Sure, here's the optimized GitHub README for the `ckb-linked-tx` project:
-
 **ckb-linked-tx**
 
 **A tool for testing CKB linked transactions.**
