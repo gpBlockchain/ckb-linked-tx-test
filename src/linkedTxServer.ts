@@ -80,7 +80,7 @@ export async function buildAndSendTransactionWithCells(cells: Cell[], select_lis
     let txHash = "";
     for (let i = 0; i < 10; i++) {
         try {
-            txHash = await send_test_transaction(CKB_RPC_URL, rawTx)
+            txHash = await RPCClient.sendTransaction(rawTx)
             break
         } catch (e) {
             await asyncSleep(1000)
@@ -150,12 +150,14 @@ export function buildTransactionWithInput(cells: Cell[], outputCount: number, fe
         })
     }
     tx = tx.update("outputs", (outputs) => outputs.push(...new_outputs));
-
+    let rd_str = generateRandomHexString(4 * 1024)
     // witnesses
     const newWitnessArgs: WitnessArgs = {
         /* 65-byte zeros in hex */
         lock:
             "0x0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+        inputType: rd_str,
+        outputType: rd_str
     };
     let new_witnesses = cells.map(inputs => "0x")
     new_witnesses[0] = bytes.hexify(blockchain.WitnessArgs.pack(newWitnessArgs))
@@ -164,6 +166,14 @@ export function buildTransactionWithInput(cells: Cell[], outputCount: number, fe
     return tx;
 }
 
+function generateRandomHexString(num: number) {
+    let hexString = '0x';
+    for (let i = 0; i < num; i++) {
+        // 每次随机生成一个0到15之间的数字，然后转为16进制
+        hexString += Math.floor(Math.random() * 16).toString(16);
+    }
+    return hexString;
+}
 
 export async function waitTransactionCommitted(
     txHash: string,
@@ -215,8 +225,7 @@ export async function remove_transaction(CKB_RPC_URL: string, txHash: String): P
 }
 
 export async function clear_tx_pool(CKB_RPC_URL: string): Promise<void> {
-    await request(1, CKB_RPC_URL, "clear_tx_pool", [
-    ]);
+    await request(1, CKB_RPC_URL, "clear_tx_pool", []);
 }
 
 
